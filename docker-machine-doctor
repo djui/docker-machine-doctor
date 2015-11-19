@@ -1,11 +1,11 @@
 #!/bin/bash -eu
 
-if [ ! "$DOCKER_MACHINE_NAME" ] && [ ! "$1" ]; then
+if [ ! "$DOCKER_MACHINE_NAME" ] && [ "$#" -ne 1 ]; then
 	echo "Usage: docker-machine doctor <name>"
 	exit 1
 fi
 
-NAME="${DOCKER_MACHINE_NAME:-1}"
+NAME="${DOCKER_MACHINE_NAME:-$1}"
 FS="/mnt/sda1"
 
 STATUS="$(docker-machine status $NAME)"
