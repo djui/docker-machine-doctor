@@ -8,7 +8,6 @@ fi
 NAME="${DOCKER_MACHINE_NAME:-1}"
 FS="/mnt/sda1"
 
-
 STATUS="$(docker-machine status $NAME)"
 if [ "$STATUS" != "Running" ]; then
 	echo "Docker Machine $NAME not running: $STATUS"
@@ -26,6 +25,22 @@ if [ "$MOUNT" != "0" ]; then
 	echo "Docker Machine $NAME has no hard disk mounted"
 	exit 1
 fi
+
+_warn() {
+    if [ -t 1 ]; then
+	    echo -e "\033[1;33mWarning: $@\033[0m"
+    else
+        echo "$@"
+    fi
+}
+
+_error() {
+    if [ -t 1 ]; then
+	    echo -e "\033[1;31mError: $@\033[0m"
+    else
+        echo "$@"
+    fi
+}
 
 _header() {
 	echo
@@ -72,6 +87,19 @@ docker_containers() {
     _ssh 'docker ps --all --format="table {{.ID}}\t{{.Image}}\t{{.Size}}"'
 }
 
+}
+
+driver_fs_check_mounted() {
+    _header "Virtual hard drive mounted:"
+    local device="/dev/sda1"
+    local status=$(_ssh 'mount | grep "$device on $FS" > /dev/null ; echo $?')
+    if [ "$status" != "0" ]; then
+        _warn "No. Virtual hard drive not mounted!"
+    else
+        echo "Yes."
+    fi
+}
+
 driver_fs_mounts() {
     _header "Filesystem mounts:"
     _ssh 'sudo df -a -T -h -m' | sort -k 6 -r
@@ -112,6 +140,7 @@ main() {
     docker_machine_version
     docker_images
     docker_containers
+    driver_fs_check_mounted
     driver_fs_mounts
     driver_disk_containers
     driver_disk_volumes
