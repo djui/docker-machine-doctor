@@ -74,7 +74,7 @@ docker_machine_version() {
 
 docker_version() {
     _header "Docker client and server version:"
-    _ssh 'docker version'
+    docker version
 }
 
 docker_images() {
