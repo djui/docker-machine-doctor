@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 
 if [ ! "$DOCKER_MACHINE_NAME" ] && [ "$#" -ne 1 ]; then
-	echo "Usage: docker-machine doctor <name>"
+	echo "Usage: docker-machine-doctor <name>"
 	exit 1
 fi
 

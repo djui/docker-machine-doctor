@@ -18,6 +18,9 @@ Currently only supporting `virtualbox` driver.
 ## Usage
 
     $ docker-machine-doctor
+    Usage: docker-machine-doctor <name>
+
+    $ docker-machine-doctor
 
 
     Docker client and server version:
