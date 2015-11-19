@@ -1,7 +1,7 @@
 # docker-machine-doctor
 
-A tool that helps debugging problems with docker-machine. For example, what
-takes up the virtual hard disk space.
+Your Docker MD. A tool that helps debugging problems with docker-machine. For
+example, what takes up the virtual hard disk space.
 
 
 ## Limitations
