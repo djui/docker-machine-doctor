@@ -29,10 +29,14 @@ if [ "$MOUNT" != "0" ]; then
 	exit 1
 fi
 
-_header () {
+_header() {
 	echo
 	echo
-	echo -e "\033[1;37m$@\033[0m"
+    if [ -t 1 ]; then
+	    echo -e "\033[1;37m$@\033[0m"
+    else
+        echo "$@"
+    fi
 }
 
 _header "Docker client and server version:"
