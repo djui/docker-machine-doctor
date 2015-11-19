@@ -9,6 +9,12 @@ example, what takes up the virtual hard disk space.
 Currently only supporting `virtualbox` driver.
 
 
+## Installation
+
+    $ curl -O https://raw.githubusercontent.com/djui/docker-machine-doctor/master/docker-machine-doctor && \
+          chmod u+x docker-machine-doctor
+
+
 ## Usage
 
     $ docker-machine-doctor
