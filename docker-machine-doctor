@@ -8,15 +8,20 @@ fi
 NAME="${DOCKER_MACHINE_NAME:-$1}"
 FS="/mnt/sda1"
 
+if [ ! "$(which docker-machine)" ]; then
+    echo "Error: Could not find docker-machine executable"
+    exit 1
+fi
+
 STATUS="$(docker-machine status $NAME)"
 if [ "$STATUS" != "Running" ]; then
-	echo "Docker Machine $NAME not running: $STATUS"
+	echo "Error: Docker Machine $NAME not running: $STATUS"
 	exit 1
 fi
 
 DRIVER="$(docker-machine inspect --format="{{.DriverName}}" $NAME)"
 if [ "$DRIVER" != "virtualbox" ]; then
-	echo "Docker Machine $NAME driver not supported: $DRIVER"
+	echo "Error: Docker Machine $NAME driver not supported: $DRIVER"
 	exit 1
 fi
 
