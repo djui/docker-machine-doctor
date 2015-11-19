@@ -42,13 +42,16 @@ _error() {
 }
 
 _header() {
-	echo
-	echo
     if [ -t 1 ]; then
 	    echo -e "\033[1;37m$@\033[0m"
     else
         echo "$@"
     fi
+}
+
+_footer() {
+    echo
+    echo
 }
 
 _ssh() {
@@ -69,26 +72,31 @@ _du_top10() {
 docker_machine_version() {
     _header "Docker machine version:"
     docker-machine -version
+    _footer
 }
 
 docker_version() {
     _header "Docker client and server version:"
     docker version
+    _footer
 }
 
 docker_images() {
     _header "Intermediate images:"
     _ssh 'docker images' | awk '$1 == "<none>" {print $3}'
+    _footer
 }
 
 docker_containers() {
     _header "Containers:"
     _ssh 'docker ps --all --format="table {{.ID}}\t{{.Image}}\t{{.Size}}"'
+    _footer
 }
 
 driver_storepath() {
     _header "Docker machine store path:"
     docker-machine inspect --format="{{.Driver.Driver.StorePath}}" $NAME
+    _footer
 }
 
 driver_fs_check_mounted() {
@@ -100,11 +108,13 @@ driver_fs_check_mounted() {
     else
         echo "Yes."
     fi
+    _footer
 }
 
 driver_fs_mounts() {
     _header "Filesystem mounts:"
     _ssh 'sudo df -a -T -h -m' | sort -k 6 -r
+    _footer
 }
 
 driver_disk_containers() {
@@ -112,6 +122,7 @@ driver_disk_containers() {
     _du "$FS/var/lib/docker/containers/"
     echo
     _du_top10 "$FS/var/lib/docker/containers/"
+    _footer
 }
 
 driver_disk_volumes() {
@@ -119,6 +130,7 @@ driver_disk_volumes() {
     _du "$FS/var/lib/docker/volumes/"
     echo
     _du_top10 "$FS/var/lib/docker/volumes/"
+    _footer
 }
 
 driver_disk_fs() {
@@ -126,6 +138,7 @@ driver_disk_fs() {
     _du "$FS/var/lib/docker/aufs/diff/"
     echo
     _du_top10 "$FS/var/lib/docker/aufs/diff/"
+    _footer
 }
 
 driver_disk_temp() {
@@ -135,6 +148,7 @@ driver_disk_temp() {
     _du_top10 "$FS/lost+found/"
     _du_top10 "$FS/tmp/"
     _du_top10 "$FS/var/lib/docker/tmp/"
+    _footer
 }
 
 main() {
