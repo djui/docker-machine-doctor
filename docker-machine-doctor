@@ -20,12 +20,6 @@ if [ "$DRIVER" != "virtualbox" ]; then
 	exit 1
 fi
 
-MOUNT="$(docker-machine ssh $NAME test -e /dev/sda1 2> /dev/null ; echo $?)"
-if [ "$MOUNT" != "0" ]; then
-	echo "Docker Machine $NAME has no hard disk mounted"
-	exit 1
-fi
-
 _warn() {
     if [ -t 1 ]; then
 	    echo -e "\033[1;33mWarning: $@\033[0m"
