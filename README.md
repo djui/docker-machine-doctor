@@ -45,6 +45,10 @@ Currently only supporting `virtualbox` driver.
     68b061a29aa9        ubuntu              0 B
 
 
+    Docker machine store path:
+    /Users/uwe/.docker/machine
+
+
     Virtual hard drive mounted:
     Yes.
 

@@ -87,6 +87,9 @@ docker_containers() {
     _ssh 'docker ps --all --format="table {{.ID}}\t{{.Image}}\t{{.Size}}"'
 }
 
+driver_storepath() {
+    _header "Docker machine store path:"
+    docker-machine inspect --format="{{.Driver.Driver.StorePath}}" $NAME
 }
 
 driver_fs_check_mounted() {
@@ -140,6 +143,7 @@ main() {
     docker_machine_version
     docker_images
     docker_containers
+    driver_storepath
     driver_fs_check_mounted
     driver_fs_mounts
     driver_disk_containers
