@@ -104,9 +104,9 @@ Currently only supporting `virtualbox` driver.
     
     
     Disk space usage: Temporary files:
-    148.0M	/mnt/sda1/var/lib/docker/tmp/
-    16.0K	/mnt/sda1/tmp/
     16.0K	/mnt/sda1/lost+found/
+    16.0K	/mnt/sda1/tmp/
+    148.0M	/mnt/sda1/var/lib/docker/tmp/
     
     74M	/mnt/sda1/var/lib/docker/tmp/docker-builder251338753/cde-package/sanitized-root.tar
     7M	/mnt/sda1/var/lib/docker/tmp/docker-builder251338753/pkg/formats/xlsx/mapping/calibri.ttx

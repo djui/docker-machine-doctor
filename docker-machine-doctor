@@ -6,9 +6,7 @@ if [ ! "$DOCKER_MACHINE_NAME" ] && [ ! "$1" ]; then
 fi
 
 NAME="${DOCKER_MACHINE_NAME:-1}"
-SSH="docker-machine ssh $NAME"
 FS="/mnt/sda1"
-SIZE=10
 
 
 STATUS="$(docker-machine status $NAME)"
@@ -23,7 +21,7 @@ if [ "$DRIVER" != "virtualbox" ]; then
 	exit 1
 fi
 
-MOUNT="$($SSH test -e /dev/sda1 2> /dev/null ; echo $?)"
+MOUNT="$(docker-machine ssh $NAME test -e /dev/sda1 2> /dev/null ; echo $?)"
 if [ "$MOUNT" != "0" ]; then
 	echo "Docker Machine $NAME has no hard disk mounted"
 	exit 1
@@ -39,57 +37,86 @@ _header() {
     fi
 }
 
-_header "Docker client and server version:"
-docker version
+_ssh() {
+    docker-machine ssh $NAME "$@"
+}
 
-_header "Docker machine version:"
-docker-machine -version
+_du() {
+    _ssh "sudo du -sh $@"
+}
 
-_header "Intermediate images:"
-$SSH 'docker images' | awk '$1 == "<none>" {print $3}'
+_du_top10() {
+    _ssh "sudo find $1 -type f -print0 | xargs -0 sudo du -a -m 2> /dev/null" \
+	    | sort -n -r \
+	    | ( grep -m 10 -v "^0" || : ) \
+	    | sed "s/\([0-9]\+\)/\1M/"
+}
 
-_header "Containers:"
-$SSH 'docker ps --all --format="table {{.ID}}\t{{.Image}}\t{{.Size}}"'
+docker_machine_version() {
+    _header "Docker machine version:"
+    docker-machine -version
+}
 
-_header "Filesystem mounts:"
-$SSH 'sudo df -a -T -h -m' | sort -k 6 -r
+docker_version() {
+    _header "Docker client and server version:"
+    _ssh 'docker version'
+}
 
-_header "Disk space usage: Containers:"
-$SSH "sudo du -sh $FS/var/lib/docker/containers/"
-echo
-$SSH "sudo find $FS/var/lib/docker/containers/ -type f -print0 | xargs -0 sudo du -a -m 2> /dev/null" \
-	| sort -n -r \
-	| ( grep -m $SIZE -v "^0" || : ) \
-	| sed "s/\([0-9]\+\)/\1M/"
+docker_images() {
+    _header "Intermediate images:"
+    _ssh 'docker images' | awk '$1 == "<none>" {print $3}'
+}
 
-_header "Disk space usage: Volumes:"
-$SSH "sudo du -sh $FS/var/lib/docker/volumes/"
-echo
-$SSH "sudo find $FS/var/lib/docker/volumes/ -type f -print0 | xargs -0 sudo du -a -m 2> /dev/null" \
-	| sort -n -r \
-	| ( grep -m $SIZE -v "^0" || : ) \
-	| sed "s/\([0-9]\+\)/\1M/"
+docker_containers() {
+    _header "Containers:"
+    _ssh 'docker ps --all --format="table {{.ID}}\t{{.Image}}\t{{.Size}}"'
+}
 
-_header "Disk space usage: Filesystem:"
-$SSH "sudo du -sh $FS/var/lib/docker/aufs/diff/"
-echo
-$SSH "sudo find $FS/var/lib/docker/aufs/diff/ -type f -print0 | xargs -0 sudo du -a -m 2> /dev/null" \
-	| sort -n -r \
-	| ( grep -m $SIZE -v "^0" || : ) \
-	| sed "s/\([0-9]\+\)/\1M/"
+driver_fs_mounts() {
+    _header "Filesystem mounts:"
+    _ssh 'sudo df -a -T -h -m' | sort -k 6 -r
+}
 
-_header "Disk space usage: Temporary files:"
-$SSH "sudo du -sh $FS/var/lib/docker/tmp/ $FS/tmp/ $FS/lost+found/"
-echo
-$SSH "sudo find $FS/var/lib/docker/tmp/ -type f -print0 | xargs -0 sudo du -a -m 2> /dev/null" \
-	| sort -n -r \
-	| ( grep -m $SIZE -v "^0" || : ) \
-	| sed "s/\([0-9]\+\)/\1M/"
-$SSH "sudo find $FS/tmp/ -type f -print0 | xargs -0 sudo du -a -m 2> /dev/null" \
-	| sort -n -r \
-	| ( grep -m $SIZE -v "^0" || : ) \
-	| sed "s/\([0-9]\+\)/\1M/"
-$SSH "sudo find $FS/lost+found -type f -print0 | xargs -0 sudo du -a -m 2> /dev/null" \
-	| sort -n -r \
-	| ( grep -m $SIZE -v "^0" || : ) \
-	| sed "s/\([0-9]\+\)/\1M/"
+driver_disk_containers() {
+    _header "Disk space usage: Containers:"
+    _du "$FS/var/lib/docker/containers/"
+    echo
+    _du_top10 "$FS/var/lib/docker/containers/"
+}
+
+driver_disk_volumes() {
+    _header "Disk space usage: Volumes:"
+    _du "$FS/var/lib/docker/volumes/"
+    echo
+    _du_top10 "$FS/var/lib/docker/volumes/"
+}
+
+driver_disk_fs() {
+    _header "Disk space usage: Filesystem:"
+    _du "$FS/var/lib/docker/aufs/diff/"
+    echo
+    _du_top10 "$FS/var/lib/docker/aufs/diff/"
+}
+
+driver_disk_temp() {
+    _header "Disk space usage: Temporary files:"
+    _du "$FS/lost+found/" "$FS/tmp/" "$FS/var/lib/docker/tmp/"
+    echo
+    _du_top10 "$FS/lost+found/"
+    _du_top10 "$FS/tmp/"
+    _du_top10 "$FS/var/lib/docker/tmp/"
+}
+
+main() {
+    docker_version
+    docker_machine_version
+    docker_images
+    docker_containers
+    driver_fs_mounts
+    driver_disk_containers
+    driver_disk_volumes
+    driver_disk_fs
+    driver_disk_temp
+}
+
+main
