@@ -1,8 +1,8 @@
 #!/bin/bash -eu
 
 if [ ! "$DOCKER_MACHINE_NAME" ] && [ "$#" -ne 1 ]; then
-	echo "Usage: docker-machine-doctor <name>"
-	exit 1
+    echo "Usage: docker-machine-doctor <name>"
+    exit 1
 fi
 
 NAME="${DOCKER_MACHINE_NAME:-$1}"
@@ -15,19 +15,19 @@ fi
 
 STATUS="$(docker-machine status $NAME)"
 if [ "$STATUS" != "Running" ]; then
-	echo "Error: Docker Machine $NAME not running: $STATUS"
-	exit 1
+    echo "Error: Docker Machine $NAME not running: $STATUS"
+    exit 1
 fi
 
 DRIVER="$(docker-machine inspect --format="{{.DriverName}}" $NAME)"
 if [ "$DRIVER" != "virtualbox" ]; then
-	echo "Error: Docker Machine $NAME driver not supported: $DRIVER"
-	exit 1
+    echo "Error: Docker Machine $NAME driver not supported: $DRIVER"
+    exit 1
 fi
 
 _warn() {
     if [ -t 1 ]; then
-	    echo -e "\033[1;33mWarning: $@\033[0m"
+        echo -e "\033[1;33mWarning: $@\033[0m"
     else
         echo "$@"
     fi
@@ -35,7 +35,7 @@ _warn() {
 
 _error() {
     if [ -t 1 ]; then
-	    echo -e "\033[1;31mError: $@\033[0m"
+        echo -e "\033[1;31mError: $@\033[0m"
     else
         echo "$@"
     fi
@@ -43,7 +43,7 @@ _error() {
 
 _header() {
     if [ -t 1 ]; then
-	    echo -e "\033[1;37m$@\033[0m"
+        echo -e "\033[1;37m$@\033[0m"
     else
         echo "$@"
     fi
@@ -64,9 +64,9 @@ _du() {
 
 _du_top10() {
     _ssh "sudo find $1 -type f -print0 | xargs -0 sudo du -a -m 2> /dev/null" \
-	    | sort -n -r \
-	    | ( grep -m 10 -v "^0" || : ) \
-	    | sed "s/\([0-9]\+\)/\1M/"
+        | sort -n -r \
+        | ( grep -m 10 -v "^0" || : ) \
+        | sed "s/\([0-9]\+\)/\1M/"
 }
 
 docker_machine_version() {
