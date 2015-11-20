@@ -83,7 +83,7 @@ docker_version() {
 
 docker_images() {
     _header "Intermediate images:"
-    _ssh 'docker images' | awk '$1 == "<none>" {print $3}'
+    _ssh 'docker images' | awk '$1 == "<none>" {print $3 "\t" $7 " " $8}'
     _footer
 }
 

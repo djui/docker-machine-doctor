@@ -44,10 +44,12 @@ Currently only supporting `virtualbox` driver.
 
 
     Intermediate images:
+    4ac7135af0ea    960.6 MB
 
 
     Containers:
     CONTAINER ID        IMAGE               SIZE
+    790b9d314afd        postgres            0 B
     83e8ce72d772        ubuntu              0 B
     68b061a29aa9        ubuntu              0 B
 
