@@ -119,35 +119,35 @@ driver_fs_mounts() {
 
 driver_disk_containers() {
     _header "Disk space usage: Containers:"
-    _du "$FS/var/lib/docker/containers/"
+    _du "/var/lib/docker/containers/"
     echo
-    _du_top10 "$FS/var/lib/docker/containers/"
+    _du_top10 "/var/lib/docker/containers/"
     _footer
 }
 
 driver_disk_volumes() {
     _header "Disk space usage: Volumes:"
-    _du "$FS/var/lib/docker/volumes/"
+    _du "/var/lib/docker/volumes/"
     echo
-    _du_top10 "$FS/var/lib/docker/volumes/"
+    _du_top10 "/var/lib/docker/volumes/"
     _footer
 }
 
 driver_disk_fs() {
     _header "Disk space usage: Filesystem:"
-    _du "$FS/var/lib/docker/aufs/diff/"
+    _du "/var/lib/docker/aufs/diff/"
     echo
-    _du_top10 "$FS/var/lib/docker/aufs/diff/"
+    _du_top10 "/var/lib/docker/aufs/diff/"
     _footer
 }
 
 driver_disk_temp() {
     _header "Disk space usage: Temporary files:"
-    _du "$FS/lost+found/" "$FS/tmp/" "$FS/var/lib/docker/tmp/"
+    _du "$FS/lost+found/" "/tmp/" "/var/lib/docker/tmp/"
     echo
     _du_top10 "$FS/lost+found/"
-    _du_top10 "$FS/tmp/"
-    _du_top10 "$FS/var/lib/docker/tmp/"
+    _du_top10 "/tmp/"
+    _du_top10 "/var/lib/docker/tmp/"
     _footer
 }
 
