@@ -83,7 +83,7 @@ docker_version() {
 
 docker_images() {
     _header "Intermediate images:"
-    _ssh 'docker images' | grep "^<none>"
+    _ssh 'docker images' | grep "^<none>" || true
     _footer
 }
 
