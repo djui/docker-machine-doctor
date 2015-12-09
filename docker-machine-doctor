@@ -69,37 +69,37 @@ _du_top10() {
         | sed "s/\([0-9]\+\)/\1M/"
 }
 
-docker_machine_version() {
+print_docker_machine_version() {
     _header "Docker machine version:"
     docker-machine -version
     _footer
 }
 
-docker_version() {
+print_docker_version() {
     _header "Docker client and server version:"
     docker version
     _footer
 }
 
-docker_images() {
+print_docker_images() {
     _header "Intermediate images:"
     _ssh 'docker images' | grep "^<none>" || true
     _footer
 }
 
-docker_containers() {
+print_docker_containers() {
     _header "Containers:"
     _ssh 'docker ps --all --format="table {{.ID}}\t{{.Image}}\t{{.Size}}"'
     _footer
 }
 
-driver_storepath() {
+print_driver_storepath() {
     _header "Docker machine store path:"
     docker-machine inspect --format="{{.Driver.Driver.StorePath}}" $NAME
     _footer
 }
 
-driver_fs_check_mounted() {
+print_driver_fs_check_mounted() {
     _header "Virtual hard drive mounted:"
     local device="/dev/sda1"
     local status=$(_ssh 'mount | grep "$device on $FS" > /dev/null ; echo $?')
@@ -111,13 +111,13 @@ driver_fs_check_mounted() {
     _footer
 }
 
-driver_fs_mounts() {
+print_driver_fs_mounts() {
     _header "Filesystem mounts:"
     _ssh 'sudo df -a -T -h -m' | sort -k 6 -r
     _footer
 }
 
-driver_disk_containers() {
+print_driver_disk_containers() {
     _header "Disk space usage: Containers:"
     _du "/var/lib/docker/containers/"
     echo
@@ -125,7 +125,7 @@ driver_disk_containers() {
     _footer
 }
 
-driver_disk_volumes() {
+print_driver_disk_volumes() {
     _header "Disk space usage: Volumes:"
     _du "/var/lib/docker/volumes/"
     echo
@@ -133,7 +133,7 @@ driver_disk_volumes() {
     _footer
 }
 
-driver_disk_fs() {
+print_driver_disk_fs() {
     _header "Disk space usage: Filesystem:"
     _du "/var/lib/docker/aufs/diff/"
     echo
@@ -141,7 +141,7 @@ driver_disk_fs() {
     _footer
 }
 
-driver_disk_temp() {
+print_driver_disk_temp() {
     _header "Disk space usage: Temporary files:"
     _du "$FS/lost+found/" "/tmp/" "/var/lib/docker/tmp/"
     echo
@@ -152,17 +152,17 @@ driver_disk_temp() {
 }
 
 main() {
-    docker_version
-    docker_machine_version
-    docker_images
-    docker_containers
-    driver_storepath
-    driver_fs_check_mounted
-    driver_fs_mounts
-    driver_disk_containers
-    driver_disk_volumes
-    driver_disk_fs
-    driver_disk_temp
+    print_docker_version
+    print_docker_machine_version
+    print_docker_images
+    print_docker_containers
+    print_driver_storepath
+    print_driver_fs_check_mounted
+    print_driver_fs_mounts
+    print_driver_disk_containers
+    print_driver_disk_volumes
+    print_driver_disk_fs
+    print_driver_disk_temp
 }
 
 main
