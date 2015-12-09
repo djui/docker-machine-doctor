@@ -81,6 +81,12 @@ print_docker_version() {
     _footer
 }
 
+print_docker_info() {
+    _header "Docker info:"
+    docker info
+    _footer
+}
+
 print_docker_images() {
     _header "Intermediate images:"
     _ssh 'docker images' | grep "^<none>" || true
@@ -154,6 +160,7 @@ print_driver_disk_temp() {
 main() {
     print_docker_version
     print_docker_machine_version
+    print_docker_info
     print_docker_images
     print_docker_containers
     print_driver_storepath
